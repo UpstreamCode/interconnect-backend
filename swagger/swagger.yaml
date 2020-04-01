@@ -394,6 +394,18 @@ definitions:
         format: "email"
       phone:
         type: "string"
+      main_contact:
+        type: "string"
+        format: "uuid"
+      group_size: 
+        type: "integer"
+        minimum: 2
+        multipleOf: 2
+        maximum: 10
+      same_gender: 
+        type: "boolean"
+      min_age: 
+        type: "integer"
   Church:
     type: "object"
     properties:
@@ -409,6 +421,18 @@ definitions:
         format: "email"
       phone:
         type: "string"
+      main_contact:
+        type: "string"
+        format: "uuid"
+      group_size: 
+        type: "integer"
+        minimum: 2
+        multipleOf: 2
+        maximum: 10
+      same_gender: 
+        type: "boolean"
+      min_age: 
+        type: "integer"
   ErrorResponse:
     type: "object"
     properties:
@@ -454,4 +478,3 @@ definitions:
         type: "array"
         items:
           $ref: "#/definitions/User"
-        
