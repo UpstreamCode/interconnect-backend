@@ -56,6 +56,7 @@ paths:
       - in: "path"
         name: "userUuid"
         type: "string"
+        format: "uuid"
         required: true
       responses:
         200:
@@ -81,6 +82,7 @@ paths:
       - in: "path"
         name: "userUuid"
         type: "string"
+        format: "uuid"
         required: true
       - in: "body"
         name: "body"
@@ -122,7 +124,6 @@ paths:
   /church:
     post:
       tags:
-      - "member"
       - "leader"
       summary: "Add new church to system"
       description: "Add new church"
@@ -159,6 +160,7 @@ paths:
       - in: "path"
         name: "churchUuid"
         type: "string"
+        format: "uuid"
         required: true
       responses:
         200:
@@ -171,7 +173,6 @@ paths:
             $ref:  "#/definitions/ErrorResponse"
     put:
       tags:
-      - "member"
       - "leader"
       summary: "Modify existing church"
       description: "Edit church identified by church's UUID. All attributes can be edited."
@@ -184,6 +185,7 @@ paths:
       - in: "path"
         name: "churchUuid"
         type: "string"
+        format: "uuid"
         required: true
       - in: "body"
         name: "body"
@@ -202,7 +204,6 @@ paths:
             $ref: "#/definitions/ErrorResponse"
     delete:
       tags:
-      - "member"
       - "leader"
       summary: "Delete church"
       description: "Delete a church from the system."
@@ -213,6 +214,7 @@ paths:
       - in: "path"
         name: "churchUuid"
         type: "string"
+        format: "uuid"
         required: true
       responses:
         204:
@@ -221,6 +223,120 @@ paths:
           description: "Church not found"
           schema:
             $ref: "#/definitions/ErrorResponse"
+  /church/{churchUuid}/question:
+    post:
+      tags:
+      - "leader"
+      summary: "Add question"
+      description: "Add a question to the system."
+      operationId: "addQuestion"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "path"
+        name: "churchUuid"
+        type: "string"
+        format: "uuid"
+        required: true
+      - in: "body"
+        name: "body"
+        description: "Question for the church"
+        required: true
+        schema:
+          $ref: "#/definitions/QuestionIn"
+      responses:
+        200:
+          description: "Question added"
+          schema:
+            $ref: "#/definitions/Question"
+        405:
+          description: "Invalid input"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /church/{churchUuid}/question/{questionUuid}:
+    get:
+      tags:
+      - "leader"
+      summary: "Retrieve question"
+      description: "Retrieve a question for church for given UUIDs."
+      operationId: "getQuestion"
+      parameters:
+      - in: "path"
+        name: "churchUuid"
+        type: "string"
+        format: "uuid"
+        required: true
+      - in: "path"
+        name: "questionUuid"
+        type: "string"
+        format: "uuid"
+        required: true
+      responses:
+        200:
+          description: "Church question"
+          schema:
+            $ref: "#/definitions/Question"
+        404:
+          description: "Question not found"
+          schema:
+            $ref:  "#/definitions/ErrorResponse"
+    delete:
+      tags:
+      - "leader"
+      summary: "Delete question"
+      description: "Delete a question from the system."
+      operationId: "deleteQuestion"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "path"
+        name: "churchUuid"
+        type: "string"
+        format: "uuid"
+        required: true
+      - in: "path"
+        name: "questionUuid"
+        type: "string"
+        format: "uuid"
+        required: true
+      responses:
+        204:
+          description: "Question deleted"
+        404:
+          description: "Question not found"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /church/{churchUuid}/group/{groupUuid}:
+    get:
+      tags:
+      - "leader"
+      - "member"
+      summary: "Retrieve group"
+      description: "Retrieve a group for the given UUIDs."
+      operationId: "getGroup"
+      parameters:
+      - in: "path"
+        name: "churchUuid"
+        type: "string"
+        format: "uuid"
+        required: true
+      - in: "path"
+        name: "groupUuid"
+        type: "string"
+        format: "uuid"
+        required: true
+      responses:
+        200:
+          description: "Church group"
+          schema:
+            $ref: "#/definitions/Group"
+        404:
+          description: "Group not found"
+          schema:
+            $ref:  "#/definitions/ErrorResponse"
+
 
 definitions:
   UserIn:
@@ -228,6 +344,7 @@ definitions:
     properties:
       email:
         type: "string"
+        format: "email"
       firstName:
         type: "string"
       lastName:
@@ -237,14 +354,19 @@ definitions:
         items:
           $ref: "#/definitions/ContactMethod"
       dateOfBirth:
+        type: "string"
+        format: "date"
+      description:
         type: "string"
   User:
     type: "object"
     properties:
       uuid:
         type: "string"
+        format: "uuid"
       email:
         type: "string"
+        format: "email"
       firstName:
         type: "string"
       lastName:
@@ -254,6 +376,9 @@ definitions:
         items:
           $ref: "#/definitions/ContactMethod"
       dateOfBirth:
+        type: "string"
+        format: "date"
+      description:
         type: "string"
       church_id:
         type: "string"
@@ -266,6 +391,7 @@ definitions:
         type: "string"
       email:
         type: "string"
+        format: "email"
       phone:
         type: "string"
   Church:
@@ -273,12 +399,14 @@ definitions:
     properties:
       uuid:
         type: "string"
+        format: "uuid"
       name:
         type: "string"
       website:
         type: "string"
       email:
         type: "string"
+        format: "email"
       phone:
         type: "string"
   ErrorResponse:
@@ -289,7 +417,6 @@ definitions:
         format: "int32"
       message:
         type: "string"
-
   ContactMethod:
     type: "object"
     properties:
@@ -297,3 +424,34 @@ definitions:
         type: "string"
       contactDetails:
         type: "string"
+  QuestionIn:
+    type: "object"
+    properties:
+      question:
+        type: "string"
+      shared:
+        type: "boolean"
+  Question:
+    type: "object"
+    properties:
+      uuid:
+        type: "string"
+        format: "uuid"
+      question:
+        type: "string"
+      shared:
+        type: "boolean"
+  Group:
+    type: "object"
+    properties:
+      uuid:
+        type: "string"
+        format: "uuid"
+      created:
+        type: "string"
+        format: "date"
+      users:
+        type: "array"
+        items:
+          $ref: "#/definitions/User"
+        
