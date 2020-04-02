@@ -1,7 +1,7 @@
 swagger: "2.0"
 info:
   description: "This is the API for Covid 19 Global Church Hack Interconnect"
-  version: "1.0.0"
+  version: "0.0.1"
   title: "Covid 19 Global Church Hack Interconnect"
   license:
     name: "Apache 2.0"
@@ -17,10 +17,26 @@ schemes:
 - "https"
 paths:
   /user:
+    get:
+      tags:
+      - "leader"
+      summary: "Retrieve list of all your church members"
+      description: "Retrieve user details of all users."
+      operationId: "getUsers"
+      responses:
+        200:
+          description: "User details"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/User"
+        404:
+          description: "User not found"
+          schema:
+            $ref:  "#/definitions/ErrorResponse"
     post:
       tags:
       - "member"
-      - "leader"
       summary: "Create new user account"
       description: "Create a new user to be authenticated via Firebase. Both church leaders and members need such an account."
       operationId: "createUser"
@@ -40,7 +56,7 @@ paths:
           description: "User account created"
           schema:
             $ref: "#/definitions/User"
-        405:
+        400:
           description: "Invalid input"
           schema:
             $ref: "#/definitions/ErrorResponse"
@@ -48,7 +64,6 @@ paths:
     get:
       tags:
       - "member"
-      - "leader"
       summary: "Retrieve user details"
       description: "Retrieve user details including the user's contact details."
       operationId: "getUser"
@@ -62,7 +77,7 @@ paths:
         200:
           description: "User details"
           schema:
-            $ref: "#/definitions/User"
+            $ref: "#/definitions/PublicUser"
         404:
           description: "User not found"
           schema:
@@ -70,9 +85,8 @@ paths:
     put:
       tags:
       - "member"
-      - "leader"
-      summary: "Modify existing user"
-      description: "Edit user identified by user's UUID. All attributes can be edited."
+      summary: "Update user"
+      description: "Update user identified by user's UUID. All attributes can be edited."
       operationId: "editUser"
       consumes:
       - "application/json"
@@ -92,17 +106,20 @@ paths:
           $ref: "#/definitions/UserIn"
       responses:
         200:
-          description: "User account modified"
+          description: "User account updated"
           schema:
             $ref: "#/definitions/User"
-        405:
+        404:
+          description: "User not found"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        400:
           description: "Invalid input"
           schema:
             $ref: "#/definitions/ErrorResponse"
     delete:
       tags:
       - "member"
-      - "leader"
       summary: "Delete user"
       description: "Delete identified by user's UUID."
       operationId: "deleteUser"
@@ -112,6 +129,7 @@ paths:
       - in: "path"
         name: "userUuid"
         type: "string"
+        format: "uuid"
         required: true
       responses:
         204:
@@ -121,12 +139,119 @@ paths:
           schema:
             $ref: "#/definitions/ErrorResponse"
 
+  /user/{userUuid}/contactmethod:
+    post:
+      tags:
+      - "member"
+      summary: "Add a contact method to a user profile"
+      description: "Add a new contact method to an existing user profile."
+      operationId: "addContactMethod"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "path"
+        name: "userUuid"
+        description: "User's UUID"
+        type: "string"
+        format: "uuid"
+        required: true
+      - in: "body"
+        name: "body"
+        description: "Details of new contact method"
+        required: true
+        schema:
+          $ref: "#/definitions/ContactMethodIn"
+      responses:
+        200:
+          description: "Contact method created"
+          schema:
+            $ref: "#/definitions/ContactMethod"
+        400:
+          description: "Invalid input"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+
+  /user/{userUuid}/contactmethod/{methodUuid}:
+    put:
+      tags:
+      - "member"
+      summary: "Update a contact method for a user"
+      description: "Update a contact method for a user profile."
+      operationId: "updateContactMethod"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "path"
+        name: "userUuid"
+        description: "User's UUID"
+        type: "string"
+        format: "uuid"
+        required: true
+      - in: "path"
+        name: "methodUuid"
+        description: "Contact method's UUID"
+        type: "string"
+        format: "uuid"
+        required: true
+      - in: "body"
+        name: "body"
+        description: "New details of contact method"
+        required: true
+        schema:
+          $ref: "#/definitions/ContactMethodIn"
+      responses:
+        200:
+          description: "Contact method updated"
+          schema:
+            $ref: "#/definitions/ContactMethod"
+        404:
+          description: "Contact method or user not found"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        400:
+          description: "Invalid input"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+
+    delete:
+      tags:
+      - "member"
+      summary: "Delete a contact method from a user profile"
+      description: "Delete a contact method from a user profile."
+      operationId: "deleteContactMethod"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "path"
+        name: "userUuid"
+        description: "User's UUID"
+        type: "string"
+        format: "uuid"
+        required: true
+      - in: "path"
+        name: "methodUuid"
+        description: "Contact method's UUID"
+        type: "string"
+        format: "uuid"
+        required: true
+      responses:
+        204:
+          description: "Contact method deleted"
+        404:
+          description: "Contact method or user not found"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        400:
+          description: "Invalid input"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+
   /church:
     post:
       tags:
       - "leader"
-      summary: "Add new church to system"
-      description: "Add new church"
+      summary: "Add new church"
+      description: "Add new church to the system to invite members to"
       operationId: "addChurch"
       consumes:
       - "application/json"
@@ -144,15 +269,15 @@ paths:
           description: "Church added"
           schema:
             $ref: "#/definitions/Church"
-        405:
+        400:
           description: "Invalid input"
           schema:
             $ref: "#/definitions/ErrorResponse"
+
   /church/{churchUuid}:
     get:
       tags:
       - "member"
-      - "leader"
       summary: "Retrieve church details"
       description: "Retrieve church details not including configuration."
       operationId: "getChurch"
@@ -174,8 +299,8 @@ paths:
     put:
       tags:
       - "leader"
-      summary: "Modify existing church"
-      description: "Edit church identified by church's UUID. All attributes can be edited."
+      summary: "Update church"
+      description: "Update church identified by church's UUID. All attributes can be edited."
       operationId: "editChurch"
       consumes:
       - "application/json"
@@ -198,7 +323,11 @@ paths:
           description: "Church profile modified"
           schema:
             $ref: "#/definitions/ChurchIn"
-        405:
+        404:
+          description: "Church not found"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        400:
           description: "Invalid input"
           schema:
             $ref: "#/definitions/ErrorResponse"
@@ -223,6 +352,7 @@ paths:
           description: "Church not found"
           schema:
             $ref: "#/definitions/ErrorResponse"
+
   /church/{churchUuid}/question:
     post:
       tags:
@@ -251,10 +381,15 @@ paths:
           description: "Question added"
           schema:
             $ref: "#/definitions/Question"
-        405:
+        404:
+          description: "Church not found"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        400:
           description: "Invalid input"
           schema:
             $ref: "#/definitions/ErrorResponse"
+
   /church/{churchUuid}/question/{questionUuid}:
     get:
       tags:
@@ -282,6 +417,46 @@ paths:
           description: "Question not found"
           schema:
             $ref:  "#/definitions/ErrorResponse"
+    put:
+      tags:
+      - "leader"
+      summary: "Update question"
+      description: "Update a question that's already in the system."
+      operationId: "modifyQuestion"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "path"
+        name: "churchUuid"
+        type: "string"
+        format: "uuid"
+        required: true
+      - in: "path"
+        name: "questionUuid"
+        type: "string"
+        format: "uuid"
+        required: true
+      - in: "body"
+        name: "body"
+        description: "Question for the church"
+        required: true
+        schema:
+          $ref: "#/definitions/QuestionIn"
+      responses:
+        200:
+          description: "Question updated"
+          schema:
+            $ref: "#/definitions/Question"
+        404:
+          description: "Question not found"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        400:
+          description: "Invalid input"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
     delete:
       tags:
       - "leader"
@@ -308,14 +483,14 @@ paths:
           description: "Question not found"
           schema:
             $ref: "#/definitions/ErrorResponse"
-  /church/{churchUuid}/group/{groupUuid}:
+
+  /church/{churchUuid}/matchgroup/{matchGroupUuid}:
     get:
       tags:
-      - "leader"
       - "member"
       summary: "Retrieve group"
-      description: "Retrieve a group for the given UUIDs."
-      operationId: "getGroup"
+      description: "Retrieve a group of matched members for the given UUIDs."
+      operationId: "getMatchGroup"
       parameters:
       - in: "path"
         name: "churchUuid"
@@ -323,20 +498,19 @@ paths:
         format: "uuid"
         required: true
       - in: "path"
-        name: "groupUuid"
+        name: "matchGroupUuid"
         type: "string"
         format: "uuid"
         required: true
       responses:
         200:
-          description: "Church group"
+          description: "Group of matched church members"
           schema:
             $ref: "#/definitions/Group"
         404:
           description: "Group not found"
           schema:
             $ref:  "#/definitions/ErrorResponse"
-
 
 definitions:
   UserIn:
@@ -352,12 +526,13 @@ definitions:
       contact:
         type: "array"
         items:
-          $ref: "#/definitions/ContactMethod"
+          $ref: "#/definitions/ContactMethodIn"
       dateOfBirth:
         type: "string"
         format: "date"
       description:
         type: "string"
+
   User:
     type: "object"
     properties:
@@ -375,20 +550,58 @@ definitions:
         type: "array"
         items:
           $ref: "#/definitions/ContactMethod"
+      gender:
+        type: "string"
+        enum:
+          - "male"
+          - "female"
       dateOfBirth:
         type: "string"
         format: "date"
       description:
         type: "string"
-      church_id:
+      church:
         type: "string"
+        format: "uuid"
+
+  PublicUser:
+    type: "object"
+    properties:
+      uuid:
+        type: "string"
+        format: "uuid"
+      email:
+        type: "string"
+        format: "email"
+      firstName:
+        type: "string"
+      lastName:
+        type: "string"
+      contact:
+        type: "array"
+        items:
+          $ref: "#/definitions/ContactMethod"
+      gender:
+        type: "string"
+        enum:
+          - "male"
+          - "female"
+      description:
+        type: "string"
+      church:
+        type: "string"
+        format: "uuid"
+
   ChurchIn:
     type: "object"
     properties:
       name:
         type: "string"
+      description:
+        type: "string"
       website:
         type: "string"
+        format: "url"
       email:
         type: "string"
         format: "email"
@@ -406,6 +619,7 @@ definitions:
         type: "boolean"
       min_age: 
         type: "integer"
+
   Church:
     type: "object"
     properties:
@@ -433,21 +647,26 @@ definitions:
         type: "boolean"
       min_age: 
         type: "integer"
-  ErrorResponse:
-    type: "object"
-    properties:
-      code:
-        type: "integer"
-        format: "int32"
-      message:
-        type: "string"
-  ContactMethod:
+
+  ContactMethodIn:
     type: "object"
     properties:
       label:
         type: "string"
       contactDetails:
         type: "string"
+
+  ContactMethod:
+    type: "object"
+    properties:
+      uuid:
+        type: "string"
+        format: "uuid"
+      label:
+        type: "string"
+      contactDetails:
+        type: "string"
+
   QuestionIn:
     type: "object"
     properties:
@@ -455,6 +674,7 @@ definitions:
         type: "string"
       shared:
         type: "boolean"
+
   Question:
     type: "object"
     properties:
@@ -465,6 +685,7 @@ definitions:
         type: "string"
       shared:
         type: "boolean"
+
   Group:
     type: "object"
     properties:
@@ -478,3 +699,12 @@ definitions:
         type: "array"
         items:
           $ref: "#/definitions/User"
+
+  ErrorResponse:
+    type: "object"
+    properties:
+      code:
+        type: "integer"
+        format: "int32"
+      message:
+        type: "string"
