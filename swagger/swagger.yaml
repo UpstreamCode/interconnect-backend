@@ -21,22 +21,18 @@ paths:
       tags:
       - "leader"
       summary: "Retrieve list of all your church members"
-      description: "Retrieve user details of all users."
+      description: "Retrieve user details of all users of a specific church."
       operationId: "getUsers"
       responses:
         200:
-          description: "User details"
+          description: "User list"
           schema:
             type: "array"
             items:
               $ref: "#/definitions/User"
-        404:
-          description: "User not found"
-          schema:
-            $ref:  "#/definitions/ErrorResponse"
     post:
       tags:
-      - "member"
+      - "members"
       summary: "Create new user account"
       description: "Create a new user to be authenticated via Firebase. Both church leaders and members need such an account."
       operationId: "createUser"
