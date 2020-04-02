@@ -558,7 +558,7 @@ paths:
     get:
       tags:
       - "member"
-      summary: "Retrieve messages"
+      summary: "Retrieve all messages"
       description: "Retrieve messages posted on a group's bulletin."
       operationId: "getMessages"
       parameters:
@@ -576,7 +576,9 @@ paths:
         200:
           description: "Messages on a group's bulletin."
           schema:
-            $ref: "#/definitions/Messages"
+            type: "array"
+            items:
+              $ref: "#/definitions/Message"
         404:
           description: "Church/group not found"
           schema:
@@ -781,28 +783,23 @@ definitions:
       message:
         type: "string"
           
-  Messages:
+  Message:
     type: "object"
     properties:
+      uuid:
+        type: "string"
+        format: "uuid"
       group:
         type: "string"
         format: "uuid"
-      messages:
-        type: "array"
-        items:
-          type: "object"
-          properties:
-            messageUuid:
-              type: "string"
-              format: "uuid"
-            user:
-              type: "string"
-              format: "uuid"
-            sent:
-              type: "string"
-              format: "datetime"
-            message:
-              type: "string"
+      user:
+        type: "string"
+        format: "uuid"
+      sent:
+        type: "string"
+        format: "datetime"
+      message:
+        type: "string"
 
   ErrorResponse:
     type: "object"
