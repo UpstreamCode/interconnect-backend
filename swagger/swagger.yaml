@@ -277,9 +277,10 @@ paths:
   /church/{churchUuid}:
     get:
       tags:
+      - "leader"
       - "member"
       summary: "Retrieve church details"
-      description: "Retrieve church details not including configuration."
+      description: "Retrieve church details."
       operationId: "getChurch"
       parameters:
       - in: "path"
@@ -511,6 +512,75 @@ paths:
           description: "Group not found"
           schema:
             $ref:  "#/definitions/ErrorResponse"
+            
+  /church/{churchUuid}/matchgroup/{matchGroupUuid}/bulletin:
+    post:
+      tags:
+      - "member"
+      summary: "Send message"
+      description: "Post a message to the group's bulletin."
+      operationId: "sendMessage"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "path"
+        name: "churchUuid"
+        type: "string"
+        format: "uuid"
+        required: true
+      - in: "path"
+        name: "matchGroupUuid"
+        type: "string"
+        format: "uuid"
+        required: true
+      - in: "body"
+        name: "body"
+        description: "Message to send to group"
+        required: true
+        schema:
+          $ref: "#/definitions/MessageIn"
+      responses:
+        200:
+          description: "Message sent"
+          schema:
+            $ref: "#/definitions/MessageIn"
+        404:
+          description: "Church/group not found"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        400:
+          description: "Invalid input"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  
+    get:
+      tags:
+      - "member"
+      summary: "Retrieve messages"
+      description: "Retrieve messages posted on a group's bulletin."
+      operationId: "getMessages"
+      parameters:
+      - in: "path"
+        name: "churchUuid"
+        type: "string"
+        format: "uuid"
+        required: true
+      - in: "path"
+        name: "matchGroupUuid"
+        type: "string"
+        format: "uuid"
+        required: true
+      responses:
+        200:
+          description: "Messages on a group's bulletin."
+          schema:
+            $ref: "#/definitions/Messages"
+        404:
+          description: "Church/group not found"
+          schema:
+            $ref:  "#/definitions/ErrorResponse"
 
 definitions:
   UserIn:
@@ -672,8 +742,6 @@ definitions:
     properties:
       question:
         type: "string"
-      shared:
-        type: "boolean"
 
   Question:
     type: "object"
@@ -683,8 +751,6 @@ definitions:
         format: "uuid"
       question:
         type: "string"
-      shared:
-        type: "boolean"
 
   Group:
     type: "object"
@@ -699,6 +765,44 @@ definitions:
         type: "array"
         items:
           $ref: "#/definitions/User"
+  
+  MessageIn:
+    type: "object"
+    properties:
+      group:
+        type: "string"
+        format: "uuid"
+      user:
+        type: "string"
+        format: "uuid"
+      sent:
+        type: "string"
+        format: "datetime"
+      message:
+        type: "string"
+          
+  Messages:
+    type: "object"
+    properties:
+      group:
+        type: "string"
+        format: "uuid"
+      messages:
+        type: "array"
+        items:
+          type: "object"
+          properties:
+            messageUuid:
+              type: "string"
+              format: "uuid"
+            user:
+              type: "string"
+              format: "uuid"
+            sent:
+              type: "string"
+              format: "datetime"
+            message:
+              type: "string"
 
   ErrorResponse:
     type: "object"
