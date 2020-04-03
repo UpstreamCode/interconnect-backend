@@ -123,7 +123,7 @@ paths:
           schema:
             $ref: "#/definitions/ErrorResponse"
   
-  /church/{churchUuid}/{userEmail}:
+  /church/{churchUuid}/invite:
     post:
       tags:
       - "leader"
@@ -140,14 +140,14 @@ paths:
         type: "string"
         format: "uuid"
         required: true
-      - in: "path"
-        name: "userEmail"
-        type: "string"
+      - in: "body"
+        name: "userEmails"
+        type: "array"
         format: "email"
         required: true
       responses:
         200:
-          description: "Invite sent"
+          description: "Invites sent"
         400:
           description: "Invalid input"
           schema:
