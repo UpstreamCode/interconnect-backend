@@ -141,12 +141,15 @@ paths:
         format: "uuid"
         required: true
       - in: "body"
-        name: "userEmails"
-        type: "array"
-        format: "email"
+        name: "email"
+        schema:
+          type: "array"
+          items:
+            type: "string"
+            format: "email"
         required: true
       responses:
-        200:
+        204:
           description: "Invites sent"
         400:
           description: "Invalid input"
