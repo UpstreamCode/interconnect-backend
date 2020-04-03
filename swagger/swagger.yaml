@@ -1,8 +1,8 @@
 swagger: "2.0"
 info:
-  description: "This is the API for Covid 19 Global Church Hack Interconnect"
+  description: "This is the API for COVID-19 Global Church Hack 'Hello Neighbour' project"
   version: "0.0.1"
-  title: "Covid 19 Global Church Hack Interconnect"
+  title: "COVID-19 Global Church Hack 'Hello Neighbour'"
   license:
     name: "Apache 2.0"
     url: "http://www.apache.org/licenses/LICENSE-2.0.html"
@@ -16,6 +16,143 @@ tags:
 schemes:
 - "https"
 paths:
+  /church:
+    post:
+      tags:
+      - "leader"
+      summary: "Add new church"
+      description: "Add new church to the system to invite members to"
+      operationId: "addChurch"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Church details for new account"
+        required: true
+        schema:
+          $ref: "#/definitions/ChurchIn"
+      responses:
+        200:
+          description: "Church added"
+          schema:
+            $ref: "#/definitions/Church"
+        400:
+          description: "Invalid input"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+            
+  /church/{churchUuid}:
+    get:
+      tags:
+      - "leader"
+      summary: "Retrieve church details"
+      description: "Retrieve church details."
+      operationId: "getChurch"
+      parameters:
+      - in: "path"
+        name: "churchUuid"
+        type: "string"
+        format: "uuid"
+        required: true
+      responses:
+        200:
+          description: "Church details"
+          schema:
+            $ref: "#/definitions/Church"
+        404:
+          description: "Church not found"
+          schema:
+            $ref:  "#/definitions/ErrorResponse"
+    put:
+      tags:
+      - "leader"
+      summary: "Update church"
+      description: "Update church identified by church's UUID. All attributes can be edited."
+      operationId: "editChurch"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "path"
+        name: "churchUuid"
+        type: "string"
+        format: "uuid"
+        required: true
+      - in: "body"
+        name: "body"
+        description: "New church details"
+        required: true
+        schema:
+          $ref: "#/definitions/ChurchIn"
+      responses:
+        200:
+          description: "Church profile modified"
+          schema:
+            $ref: "#/definitions/ChurchIn"
+        404:
+          description: "Church not found"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        400:
+          description: "Invalid input"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+    delete:
+      tags:
+      - "leader"
+      summary: "Delete church"
+      description: "Delete a church from the system."
+      operationId: "deleteChurch"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "path"
+        name: "churchUuid"
+        type: "string"
+        format: "uuid"
+        required: true
+      responses:
+        204:
+          description: "Church deleted"
+        404:
+          description: "Church not found"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  
+  /church/{churchUuid}/{userEmail}:
+    post:
+      tags:
+      - "leader"
+      summary: "Send invite"
+      description: "Send an email invite to add new church members"
+      operationId: "sendInvite"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "path"
+        name: "churchUuid"
+        type: "string"
+        format: "uuid"
+        required: true
+      - in: "path"
+        name: "userEmail"
+        type: "string"
+        format: "email"
+        required: true
+      responses:
+        200:
+          description: "Invite sent"
+        400:
+          description: "Invalid input"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  
   /church/{churchUuid}/users:
     get:
       tags:
@@ -41,6 +178,187 @@ paths:
           schema:
             $ref:  "#/definitions/ErrorResponse"
 
+  /church/{churchUuid}/question:
+    post:
+      tags:
+      - "leader"
+      summary: "Add question"
+      description: "Add a question to the system."
+      operationId: "addQuestion"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "path"
+        name: "churchUuid"
+        type: "string"
+        format: "uuid"
+        required: true
+      - in: "body"
+        name: "body"
+        description: "Question for the church"
+        required: true
+        schema:
+          $ref: "#/definitions/QuestionIn"
+      responses:
+        200:
+          description: "Question added"
+          schema:
+            $ref: "#/definitions/Question"
+        404:
+          description: "Church not found"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        400:
+          description: "Invalid input"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+            
+  /church/{churchUuid}/questions:
+    get:
+      tags:
+      - "leader"
+      summary: "Retrieve list of all your church questions"
+      description: "Retrieve questions of a specific church."
+      operationId: "getQuestions"
+      parameters:
+      - in: "path"
+        name: "churchUuid"
+        type: "string"
+        format: "uuid"
+        required: true
+      responses:
+        200:
+          description: "Question list"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Question"
+        404:
+          description: "Church not found"
+          schema:
+            $ref:  "#/definitions/ErrorResponse"
+
+  /church/{churchUuid}/question/{questionUuid}:
+    get:
+      tags:
+      - "leader"
+      summary: "Retrieve question"
+      description: "Retrieve a question for church for given UUIDs."
+      operationId: "getQuestion"
+      parameters:
+      - in: "path"
+        name: "churchUuid"
+        type: "string"
+        format: "uuid"
+        required: true
+      - in: "path"
+        name: "questionUuid"
+        type: "string"
+        format: "uuid"
+        required: true
+      responses:
+        200:
+          description: "Church question"
+          schema:
+            $ref: "#/definitions/Question"
+        404:
+          description: "Question not found"
+          schema:
+            $ref:  "#/definitions/ErrorResponse"
+    put:
+      tags:
+      - "leader"
+      summary: "Update question"
+      description: "Update a question that's already in the system."
+      operationId: "modifyQuestion"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "path"
+        name: "churchUuid"
+        type: "string"
+        format: "uuid"
+        required: true
+      - in: "path"
+        name: "questionUuid"
+        type: "string"
+        format: "uuid"
+        required: true
+      - in: "body"
+        name: "body"
+        description: "Question for the church"
+        required: true
+        schema:
+          $ref: "#/definitions/QuestionIn"
+      responses:
+        200:
+          description: "Question updated"
+          schema:
+            $ref: "#/definitions/Question"
+        404:
+          description: "Question not found"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        400:
+          description: "Invalid input"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+    delete:
+      tags:
+      - "leader"
+      summary: "Delete question"
+      description: "Delete a question from the system."
+      operationId: "deleteQuestion"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "path"
+        name: "churchUuid"
+        type: "string"
+        format: "uuid"
+        required: true
+      - in: "path"
+        name: "questionUuid"
+        type: "string"
+        format: "uuid"
+        required: true
+      responses:
+        204:
+          description: "Question deleted"
+        404:
+          description: "Question not found"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+
+  /church/{churchUuid}/matchgroups:
+    get:
+      tags:
+      - "leader"
+      summary: "Retrieve list of all your church match groups"
+      description: "Retrieve all match groups of a specific church."
+      operationId: "getMatchGroups"
+      parameters:
+      - in: "path"
+        name: "churchUuid"
+        type: "string"
+        format: "uuid"
+        required: true
+      responses:
+        200:
+          description: "Match group list"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Group"
+        404:
+          description: "Church not found"
+          schema:
+            $ref:  "#/definitions/ErrorResponse"
+            
   /user:
     post:
       tags:
@@ -68,12 +386,36 @@ paths:
           description: "Invalid input"
           schema:
             $ref: "#/definitions/ErrorResponse"
+        
+  /user/login/{firebaseId}:
+    get:
+      tags:
+      - "member"
+      summary: "Verify login"
+      description: "Verify login with Firebase ID."
+      operationId: "verifyUser"
+      parameters:
+      - in: "path"
+        name: "firebaseId"
+        type: "string"
+        required: true
+      responses:
+        200:
+          description: "User UUID"
+          schema:
+            type: "string"
+            format: "uuid"
+        404:
+          description: "Firebase ID invalid"
+          schema:
+            $ref:  "#/definitions/ErrorResponse" 
+      
   /user/{userUuid}:
     get:
       tags:
       - "member"
       summary: "Retrieve user details"
-      description: "Retrieve user details including the user's contact details."
+      description: "Retrieve user details."
       operationId: "getUser"
       parameters:
       - in: "path"
@@ -85,7 +427,7 @@ paths:
         200:
           description: "User details"
           schema:
-            $ref: "#/definitions/PublicUser"
+            $ref: "#/definitions/User"
         404:
           description: "User not found"
           schema:
@@ -254,43 +596,19 @@ paths:
           schema:
             $ref: "#/definitions/ErrorResponse"
 
-  /church:
-    post:
+  /user/{userUuid}/church/{churchUuid}:
+   get:
       tags:
-      - "leader"
-      summary: "Add new church"
-      description: "Add new church to the system to invite members to"
-      operationId: "addChurch"
-      consumes:
-      - "application/json"
-      produces:
-      - "application/json"
-      parameters:
-      - in: "body"
-        name: "body"
-        description: "Church details for new account"
-        required: true
-        schema:
-          $ref: "#/definitions/ChurchIn"
-      responses:
-        200:
-          description: "Church added"
-          schema:
-            $ref: "#/definitions/Church"
-        400:
-          description: "Invalid input"
-          schema:
-            $ref: "#/definitions/ErrorResponse"
-
-  /church/{churchUuid}:
-    get:
-      tags:
-      - "leader"
       - "member"
-      summary: "Retrieve church details"
-      description: "Retrieve church details."
-      operationId: "getChurch"
+      summary: "Retrieve public church details"
+      description: "Retrieve public church details."
+      operationId: "getChurchPublic"
       parameters:
+      - in: "path"
+        name: "userUuid"
+        type: "string"
+        format: "uuid"
+        required: true
       - in: "path"
         name: "churchUuid"
         type: "string"
@@ -298,252 +616,15 @@ paths:
         required: true
       responses:
         200:
-          description: "Church details"
+          description: "Public church details"
           schema:
-            $ref: "#/definitions/Church"
+            $ref: "#/definitions/ChurchPublic"
         404:
           description: "Church not found"
           schema:
             $ref:  "#/definitions/ErrorResponse"
-    put:
-      tags:
-      - "leader"
-      summary: "Update church"
-      description: "Update church identified by church's UUID. All attributes can be edited."
-      operationId: "editChurch"
-      consumes:
-      - "application/json"
-      produces:
-      - "application/json"
-      parameters:
-      - in: "path"
-        name: "churchUuid"
-        type: "string"
-        format: "uuid"
-        required: true
-      - in: "body"
-        name: "body"
-        description: "New church details"
-        required: true
-        schema:
-          $ref: "#/definitions/ChurchIn"
-      responses:
-        200:
-          description: "Church profile modified"
-          schema:
-            $ref: "#/definitions/ChurchIn"
-        404:
-          description: "Church not found"
-          schema:
-            $ref: "#/definitions/ErrorResponse"
-        400:
-          description: "Invalid input"
-          schema:
-            $ref: "#/definitions/ErrorResponse"
-    delete:
-      tags:
-      - "leader"
-      summary: "Delete church"
-      description: "Delete a church from the system."
-      operationId: "deleteChurch"
-      produces:
-      - "application/json"
-      parameters:
-      - in: "path"
-        name: "churchUuid"
-        type: "string"
-        format: "uuid"
-        required: true
-      responses:
-        204:
-          description: "Church deleted"
-        404:
-          description: "Church not found"
-          schema:
-            $ref: "#/definitions/ErrorResponse"
-
-  /church/{churchUuid}/questions:
-    get:
-      tags:
-      - "leader"
-      summary: "Retrieve list of all your church questions"
-      description: "Retrieve questions of a specific church."
-      operationId: "getQuestions"
-      parameters:
-      - in: "path"
-        name: "churchUuid"
-        type: "string"
-        format: "uuid"
-        required: true
-      responses:
-        200:
-          description: "Question list"
-          schema:
-            type: "array"
-            items:
-              $ref: "#/definitions/Question"
-        404:
-          description: "Church not found"
-          schema:
-            $ref:  "#/definitions/ErrorResponse"
-
-  /church/{churchUuid}/question:
-    post:
-      tags:
-      - "leader"
-      summary: "Add question"
-      description: "Add a question to the system."
-      operationId: "addQuestion"
-      consumes:
-      - "application/json"
-      produces:
-      - "application/json"
-      parameters:
-      - in: "path"
-        name: "churchUuid"
-        type: "string"
-        format: "uuid"
-        required: true
-      - in: "body"
-        name: "body"
-        description: "Question for the church"
-        required: true
-        schema:
-          $ref: "#/definitions/QuestionIn"
-      responses:
-        200:
-          description: "Question added"
-          schema:
-            $ref: "#/definitions/Question"
-        404:
-          description: "Church not found"
-          schema:
-            $ref: "#/definitions/ErrorResponse"
-        400:
-          description: "Invalid input"
-          schema:
-            $ref: "#/definitions/ErrorResponse"
-
-  /church/{churchUuid}/question/{questionUuid}:
-    get:
-      tags:
-      - "leader"
-      summary: "Retrieve question"
-      description: "Retrieve a question for church for given UUIDs."
-      operationId: "getQuestion"
-      parameters:
-      - in: "path"
-        name: "churchUuid"
-        type: "string"
-        format: "uuid"
-        required: true
-      - in: "path"
-        name: "questionUuid"
-        type: "string"
-        format: "uuid"
-        required: true
-      responses:
-        200:
-          description: "Church question"
-          schema:
-            $ref: "#/definitions/Question"
-        404:
-          description: "Question not found"
-          schema:
-            $ref:  "#/definitions/ErrorResponse"
-    put:
-      tags:
-      - "leader"
-      summary: "Update question"
-      description: "Update a question that's already in the system."
-      operationId: "modifyQuestion"
-      consumes:
-      - "application/json"
-      produces:
-      - "application/json"
-      parameters:
-      - in: "path"
-        name: "churchUuid"
-        type: "string"
-        format: "uuid"
-        required: true
-      - in: "path"
-        name: "questionUuid"
-        type: "string"
-        format: "uuid"
-        required: true
-      - in: "body"
-        name: "body"
-        description: "Question for the church"
-        required: true
-        schema:
-          $ref: "#/definitions/QuestionIn"
-      responses:
-        200:
-          description: "Question updated"
-          schema:
-            $ref: "#/definitions/Question"
-        404:
-          description: "Question not found"
-          schema:
-            $ref: "#/definitions/ErrorResponse"
-        400:
-          description: "Invalid input"
-          schema:
-            $ref: "#/definitions/ErrorResponse"
-    delete:
-      tags:
-      - "leader"
-      summary: "Delete question"
-      description: "Delete a question from the system."
-      operationId: "deleteQuestion"
-      produces:
-      - "application/json"
-      parameters:
-      - in: "path"
-        name: "churchUuid"
-        type: "string"
-        format: "uuid"
-        required: true
-      - in: "path"
-        name: "questionUuid"
-        type: "string"
-        format: "uuid"
-        required: true
-      responses:
-        204:
-          description: "Question deleted"
-        404:
-          description: "Question not found"
-          schema:
-            $ref: "#/definitions/ErrorResponse"
-
-  /church/{churchUuid}/matchgroups:
-    get:
-      tags:
-      - "leader"
-      summary: "Retrieve list of all your church match groups"
-      description: "Retrieve all match groups of a specific church."
-      operationId: "getMatchGroups"
-      parameters:
-      - in: "path"
-        name: "churchUuid"
-        type: "string"
-        format: "uuid"
-        required: true
-      responses:
-        200:
-          description: "Match group list"
-          schema:
-            type: "array"
-            items:
-              $ref: "#/definitions/Group"
-        404:
-          description: "Church not found"
-          schema:
-            $ref:  "#/definitions/ErrorResponse"
-
-  /church/{churchUuid}/matchgroup/{userUuid}:
+            
+  /user/{userUuid}/church/{churchUuid}/matchgroup:
     get:
       tags:
       - "member"
@@ -571,7 +652,7 @@ paths:
           schema:
             $ref:  "#/definitions/ErrorResponse"
             
-  /church/{churchUuid}/matchgroup/{matchGroupUuid}/bulletin:
+  /user/{userUuid}/church/{churchUuid}/matchgroup/{matchGroupUuid}/bulletin:
     post:
       tags:
       - "member"
@@ -583,6 +664,11 @@ paths:
       produces:
       - "application/json"
       parameters:
+      - in: "path"
+        name: "userUuid"
+        type: "string"
+        format: "uuid"
+        required: true
       - in: "path"
         name: "churchUuid"
         type: "string"
@@ -621,6 +707,11 @@ paths:
       operationId: "getMessages"
       parameters:
       - in: "path"
+        name: "userUuid"
+        type: "string"
+        format: "uuid"
+        required: true
+      - in: "path"
         name: "churchUuid"
         type: "string"
         format: "uuid"
@@ -646,6 +737,9 @@ definitions:
   UserBase:
     type: "object"
     properties:
+      uuid:
+        type: "string"
+        format: "uuid"
       email:
         type: "string"
         format: "email"
@@ -653,45 +747,46 @@ definitions:
         type: "string"
       lastName:
         type: "string"
-      contact:
-        type: "array"
-        items:
-          $ref: "#/definitions/ContactMethodIn"
       description:
         type: "string"
       church:
         type: "string"
         format: "uuid"
 
+  UserPublic:
+    allOf:
+      - $ref: "#/definitions/UserBase"
+      - type: "object"
+        properties:
+          contact:
+            type: "array"
+            items:
+              $ref: "#/definitions/ContactMethod"
+            
   UserIn:
     allOf:
       - $ref: "#/definitions/UserBase"
       - type: "object"
         properties:
+          firebaseId:
+            type: "string"
           dateOfBirth:
             type: "string"
             format: "date"
-
+          contact:
+            type: "array"
+            items:
+              $ref: "#/definitions/ContactMethodIn"
+            
   User:
     allOf:
-      - $ref: "#/definitions/UserBase"
+      - $ref: "#/definitions/UserIn"
       - type: "object"
         properties:
-          uuid:
-            type: "string"
-            format: "uuid"
-          dateOfBirth:
-            type: "string"
-            format: "date"
-
-  PublicUser:
-    allOf:
-      - $ref: "#/definitions/UserBase"
-      - type: "object"
-        properties:
-          uuid:
-            type: "string"
-            format: "uuid"
+          contact:
+            type: "array"
+            items:
+              $ref: "#/definitions/ContactMethod"
 
   ChurchBase:
     type: "object"
@@ -714,6 +809,15 @@ definitions:
         type: "string"
         format: "uuid"
 
+  ChurchPublic:
+    allOf:
+      - $ref: "#/definitions/ChurchBase"
+      - type: "object"
+        properties:
+          uuid:
+            type: "string"
+            format: "uuid"
+
   ChurchIn:
     allOf:
       - $ref: "#/definitions/ChurchBase"
@@ -731,25 +835,7 @@ definitions:
 
   Church:
     allOf:
-      - $ref: "#/definitions/ChurchBase"
-      - type: "object"
-        properties:
-          uuid:
-            type: "string"
-            format: "uuid"
-          group_size:
-            type: "integer"
-            minimum: 2
-            multipleOf: 2
-            maximum: 10
-          same_gender:
-            type: "boolean"
-          min_age:
-            type: "integer"
-
-  PublicChurch:
-    allOf:
-      - $ref: "#/definitions/ChurchBase"
+      - $ref: "#/definitions/ChurchIn"
       - type: "object"
         properties:
           uuid:
@@ -763,6 +849,9 @@ definitions:
         type: "string"
       contactDetails:
         type: "string"
+      user:
+        type: "string"
+        format: "uuid"
 
   ContactMethod:
     allOf:
@@ -778,6 +867,9 @@ definitions:
     properties:
       question:
         type: "string"
+      church:
+        type: "string"
+        format: "uuid"
 
   Question:
     allOf:
@@ -800,7 +892,7 @@ definitions:
       users:
         type: "array"
         items:
-          $ref: "#/definitions/User"
+          $ref: "#/definitions/UserPublic"
 
   MessageIn:
     type: "object"
@@ -819,7 +911,7 @@ definitions:
           
   Message:
     allOf:
-    - $ref: "#/definitions/QuestionIn"
+    - $ref: "#/definitions/MessageIn"
     - type: "object"
       properties:
         uuid:
