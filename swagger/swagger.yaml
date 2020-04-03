@@ -543,7 +543,6 @@ paths:
           schema:
             $ref:  "#/definitions/ErrorResponse"
 
-
   /church/{churchUuid}/matchgroup/{userUuid}:
     get:
       tags:
@@ -644,7 +643,7 @@ paths:
             $ref:  "#/definitions/ErrorResponse"
 
 definitions:
-  UserIn:
+  UserBase:
     type: "object"
     properties:
       email:
@@ -658,83 +657,43 @@ definitions:
         type: "array"
         items:
           $ref: "#/definitions/ContactMethodIn"
-      dateOfBirth:
-        type: "string"
-        format: "date"
       description:
         type: "string"
       church:
         type: "string"
         format: "uuid"
+
+  UserIn:
+    allOf:
+      - $ref: "#/definitions/UserBase"
+      - type: "object"
+        properties:
+          dateOfBirth:
+            type: "string"
+            format: "date"
 
   User:
-    type: "object"
-    properties:
-      uuid:
-        type: "string"
-        format: "uuid"
-      email:
-        type: "string"
-        format: "email"
-      firstName:
-        type: "string"
-      lastName:
-        type: "string"
-      contact:
-        type: "array"
-        items:
-          $ref: "#/definitions/ContactMethod"
-      gender:
-        type: "string"
-        enum:
-          - "male"
-          - "female"
-      dateOfBirth:
-        type: "string"
-        format: "date"
-      description:
-        type: "string"
-      church:
-        type: "string"
-        format: "uuid"
-        
-  FakeUser:
-    allOf: 
-      - $ref: '#/definitions/User'
-      - type: object
+    allOf:
+      - $ref: "#/definitions/UserBase"
+      - type: "object"
         properties:
-          bark:
+          uuid:
             type: "string"
+            format: "uuid"
+          dateOfBirth:
+            type: "string"
+            format: "date"
 
   PublicUser:
-    type: "object"
-    properties:
-      uuid:
-        type: "string"
-        format: "uuid"
-      email:
-        type: "string"
-        format: "email"
-      firstName:
-        type: "string"
-      lastName:
-        type: "string"
-      contact:
-        type: "array"
-        items:
-          $ref: "#/definitions/ContactMethod"
-      gender:
-        type: "string"
-        enum:
-          - "male"
-          - "female"
-      description:
-        type: "string"
-      church:
-        type: "string"
-        format: "uuid"
+    allOf:
+      - $ref: "#/definitions/UserBase"
+      - type: "object"
+        properties:
+          uuid:
+            type: "string"
+            format: "uuid"
 
-  ChurchIn:
+  ChurchBase:
     type: "object"
     properties:
       name:
@@ -754,47 +713,48 @@ definitions:
       main_contact:
         type: "string"
         format: "uuid"
-      group_size: 
-        type: "integer"
-        minimum: 2
-        multipleOf: 2
-        maximum: 10
-      same_gender: 
-        type: "boolean"
-      min_age: 
-        type: "integer"
+
+  ChurchIn:
+    allOf:
+      - $ref: "#/definitions/ChurchBase"
+      - type: "object"
+        properties:
+          group_size:
+            type: "integer"
+            minimum: 2
+            multipleOf: 2
+            maximum: 10
+          same_gender:
+            type: "boolean"
+          min_age:
+            type: "integer"
 
   Church:
-    type: "object"
-    properties:
-      uuid:
-        type: "string"
-        format: "uuid"
-      name:
-        type: "string"
-      description:
-        type: "string"
-      address:
-        type: "string"
-      website:
-        type: "string"
-      email:
-        type: "string"
-        format: "email"
-      phone:
-        type: "string"
-      main_contact:
-        type: "string"
-        format: "uuid"
-      group_size: 
-        type: "integer"
-        minimum: 2
-        multipleOf: 2
-        maximum: 10
-      same_gender: 
-        type: "boolean"
-      min_age: 
-        type: "integer"
+    allOf:
+      - $ref: "#/definitions/ChurchBase"
+      - type: "object"
+        properties:
+          uuid:
+            type: "string"
+            format: "uuid"
+          group_size:
+            type: "integer"
+            minimum: 2
+            multipleOf: 2
+            maximum: 10
+          same_gender:
+            type: "boolean"
+          min_age:
+            type: "integer"
+
+  PublicChurch:
+    allOf:
+      - $ref: "#/definitions/ChurchBase"
+      - type: "object"
+        properties:
+          uuid:
+            type: "string"
+            format: "uuid"
 
   ContactMethodIn:
     type: "object"
@@ -805,15 +765,13 @@ definitions:
         type: "string"
 
   ContactMethod:
-    type: "object"
-    properties:
-      uuid:
-        type: "string"
-        format: "uuid"
-      label:
-        type: "string"
-      contactDetails:
-        type: "string"
+    allOf:
+    - $ref: "#/definitions/ContactMethodIn"
+    - type: "object"
+      properties:
+        uuid:
+         type: "string"
+         format: "uuid"
 
   QuestionIn:
     type: "object"
@@ -822,13 +780,13 @@ definitions:
         type: "string"
 
   Question:
-    type: "object"
-    properties:
-      uuid:
-        type: "string"
-        format: "uuid"
-      question:
-        type: "string"
+    allOf:
+    - $ref: "#/definitions/QuestionIn"
+    - type: "object"
+      properties:
+        uuid:
+         type: "string"
+         format: "uuid"
 
   Group:
     type: "object"
@@ -843,7 +801,7 @@ definitions:
         type: "array"
         items:
           $ref: "#/definitions/User"
-  
+
   MessageIn:
     type: "object"
     properties:
@@ -860,22 +818,13 @@ definitions:
         type: "string"
           
   Message:
-    type: "object"
-    properties:
-      uuid:
-        type: "string"
-        format: "uuid"
-      group:
-        type: "string"
-        format: "uuid"
-      user:
-        type: "string"
-        format: "uuid"
-      sent:
-        type: "string"
-        format: "datetime"
-      message:
-        type: "string"
+    allOf:
+    - $ref: "#/definitions/QuestionIn"
+    - type: "object"
+      properties:
+        uuid:
+          type: "string"
+          format: "uuid"
 
   ErrorResponse:
     type: "object"
