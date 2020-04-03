@@ -389,29 +389,6 @@ paths:
           description: "Invalid input"
           schema:
             $ref: "#/definitions/ErrorResponse"
-        
-  /user/login/{firebaseId}:
-    get:
-      tags:
-      - "member"
-      summary: "Verify login"
-      description: "Verify login with Firebase ID."
-      operationId: "verifyUser"
-      parameters:
-      - in: "path"
-        name: "firebaseId"
-        type: "string"
-        required: true
-      responses:
-        200:
-          description: "User UUID"
-          schema:
-            type: "string"
-            format: "uuid"
-        404:
-          description: "Firebase ID invalid"
-          schema:
-            $ref:  "#/definitions/ErrorResponse" 
       
   /user/{userUuid}:
     get:
@@ -740,9 +717,6 @@ definitions:
   UserBase:
     type: "object"
     properties:
-      uuid:
-        type: "string"
-        format: "uuid"
       email:
         type: "string"
         format: "email"
@@ -761,6 +735,9 @@ definitions:
       - $ref: "#/definitions/UserBase"
       - type: "object"
         properties:
+          uuid:
+            type: "string"
+            format: "uuid"
           contact:
             type: "array"
             items:
@@ -771,21 +748,18 @@ definitions:
       - $ref: "#/definitions/UserBase"
       - type: "object"
         properties:
-          firebaseId:
-            type: "string"
           dateOfBirth:
             type: "string"
             format: "date"
-          contact:
-            type: "array"
-            items:
-              $ref: "#/definitions/ContactMethodIn"
             
   User:
     allOf:
       - $ref: "#/definitions/UserIn"
       - type: "object"
         properties:
+          uuid:
+            type: "string"
+            format: "uuid"
           contact:
             type: "array"
             items:
