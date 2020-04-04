@@ -16,7 +16,7 @@ class Group(Model):
     Do not edit the class manually.
     """
 
-    def __init__(self, uuid: str=None, created: date=None, users: List[UserPublic]=None):  # noqa: E501
+    def __init__(self, uuid: str=None, created: date=None, users: List[UserPublic]=None, question: str=None):  # noqa: E501
         """Group - a model defined in Swagger
 
         :param uuid: The uuid of this Group.  # noqa: E501
@@ -25,22 +25,27 @@ class Group(Model):
         :type created: date
         :param users: The users of this Group.  # noqa: E501
         :type users: List[UserPublic]
+        :param question: The question of this Group.  # noqa: E501
+        :type question: str
         """
         self.swagger_types = {
             'uuid': str,
             'created': date,
-            'users': List[UserPublic]
+            'users': List[UserPublic],
+            'question': str
         }
 
         self.attribute_map = {
             'uuid': 'uuid',
             'created': 'created',
-            'users': 'users'
+            'users': 'users',
+            'question': 'question'
         }
 
         self._uuid = uuid
         self._created = created
         self._users = users
+        self._question = question
 
     @classmethod
     def from_dict(cls, dikt) -> 'Group':
@@ -115,3 +120,24 @@ class Group(Model):
         """
 
         self._users = users
+
+    @property
+    def question(self) -> str:
+        """Gets the question of this Group.
+
+
+        :return: The question of this Group.
+        :rtype: str
+        """
+        return self._question
+
+    @question.setter
+    def question(self, question: str):
+        """Sets the question of this Group.
+
+
+        :param question: The question of this Group.
+        :type question: str
+        """
+
+        self._question = question
