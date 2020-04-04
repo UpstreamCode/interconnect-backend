@@ -1,0 +1,1 @@
+IDENTITY_HEADER = 'X-Mock-User'

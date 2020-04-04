@@ -45,6 +45,14 @@ paths:
           description: "Invalid input"
           schema:
             $ref: "#/definitions/ErrorResponse"
+        "401":
+          description: "Unauthenticated"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        "403":
+          description: "Unauthorised"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
       x-swagger-router-controller: "swagger_server.controllers.leader_controller"
   /church/{churchUuid}:
     get:
@@ -64,6 +72,14 @@ paths:
           description: "Church details"
           schema:
             $ref: "#/definitions/Church"
+        "401":
+          description: "Unauthenticated"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        "403":
+          description: "Unauthorised"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
         "404":
           description: "Church not found"
           schema:
@@ -101,6 +117,14 @@ paths:
           description: "Invalid input"
           schema:
             $ref: "#/definitions/ErrorResponse"
+        "401":
+          description: "Unauthenticated"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        "403":
+          description: "Unauthorised"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
         "404":
           description: "Church not found"
           schema:
@@ -123,6 +147,14 @@ paths:
       responses:
         "204":
           description: "Church deleted"
+        "401":
+          description: "Unauthenticated"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        "403":
+          description: "Unauthorised"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
         "404":
           description: "Church not found"
           schema:
@@ -160,6 +192,14 @@ paths:
           description: "Invalid input"
           schema:
             $ref: "#/definitions/ErrorResponse"
+        "401":
+          description: "Unauthenticated"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        "403":
+          description: "Unauthorised"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
       x-swagger-router-controller: "swagger_server.controllers.leader_controller"
   /church/{churchUuid}/users:
     get:
@@ -181,6 +221,14 @@ paths:
             type: "array"
             items:
               $ref: "#/definitions/User"
+        "401":
+          description: "Unauthenticated"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        "403":
+          description: "Unauthorised"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
         "404":
           description: "Church not found"
           schema:
@@ -218,6 +266,14 @@ paths:
           description: "Invalid input"
           schema:
             $ref: "#/definitions/ErrorResponse"
+        "401":
+          description: "Unauthenticated"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        "403":
+          description: "Unauthorised"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
         "404":
           description: "Church not found"
           schema:
@@ -243,6 +299,14 @@ paths:
             type: "array"
             items:
               $ref: "#/definitions/Question"
+        "401":
+          description: "Unauthenticated"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        "403":
+          description: "Unauthorised"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
         "404":
           description: "Church not found"
           schema:
@@ -271,6 +335,14 @@ paths:
           description: "Church question"
           schema:
             $ref: "#/definitions/Question"
+        "401":
+          description: "Unauthenticated"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        "403":
+          description: "Unauthorised"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
         "404":
           description: "Question not found"
           schema:
@@ -312,6 +384,14 @@ paths:
           description: "Invalid input"
           schema:
             $ref: "#/definitions/ErrorResponse"
+        "401":
+          description: "Unauthenticated"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        "403":
+          description: "Unauthorised"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
         "404":
           description: "Question not found"
           schema:
@@ -339,6 +419,10 @@ paths:
       responses:
         "204":
           description: "Question deleted"
+        "403":
+          description: "Unauthorised"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
         "404":
           description: "Question not found"
           schema:
@@ -364,6 +448,14 @@ paths:
             type: "array"
             items:
               $ref: "#/definitions/Group"
+        "401":
+          description: "Unauthenticated"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        "403":
+          description: "Unauthorised"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
         "404":
           description: "Church not found"
           schema:
@@ -416,6 +508,10 @@ paths:
           description: "User details"
           schema:
             $ref: "#/definitions/User"
+        "401":
+          description: "Unauthenticated"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
         "404":
           description: "User not found"
           schema:
@@ -452,6 +548,14 @@ paths:
           description: "Invalid input"
           schema:
             $ref: "#/definitions/ErrorResponse"
+        "401":
+          description: "Unauthenticated"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        "403":
+          description: "Unauthorised"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
         "404":
           description: "User not found"
           schema:
@@ -474,6 +578,14 @@ paths:
       responses:
         "204":
           description: "User deleted"
+        "401":
+          description: "Unauthenticated"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        "403":
+          description: "Unauthorised"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
         "404":
           description: "User not found"
           schema:
@@ -508,6 +620,14 @@ paths:
             $ref: "#/definitions/ContactMethod"
         "400":
           description: "Invalid input"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        "401":
+          description: "Unauthenticated"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        "403":
+          description: "Unauthorised"
           schema:
             $ref: "#/definitions/ErrorResponse"
       x-swagger-router-controller: "swagger_server.controllers.member_controller"
@@ -548,6 +668,14 @@ paths:
           description: "Invalid input"
           schema:
             $ref: "#/definitions/ErrorResponse"
+        "401":
+          description: "Unauthenticated"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        "403":
+          description: "Unauthorised"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
         "404":
           description: "Contact method or user not found"
           schema:
@@ -581,6 +709,14 @@ paths:
           description: "Invalid input"
           schema:
             $ref: "#/definitions/ErrorResponse"
+        "401":
+          description: "Unauthenticated"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        "403":
+          description: "Unauthorised"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
         "404":
           description: "Contact method or user not found"
           schema:
@@ -609,6 +745,14 @@ paths:
           description: "Public church details"
           schema:
             $ref: "#/definitions/ChurchPublic"
+        "401":
+          description: "Unauthenticated"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        "403":
+          description: "Unauthorised"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
         "404":
           description: "Church not found"
           schema:
@@ -637,6 +781,14 @@ paths:
           description: "Group of matched church members"
           schema:
             $ref: "#/definitions/Group"
+        "401":
+          description: "Unauthenticated"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        "403":
+          description: "Unauthorised"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
         "404":
           description: "Group not found"
           schema:
@@ -672,6 +824,14 @@ paths:
             type: "array"
             items:
               $ref: "#/definitions/Message"
+        "401":
+          description: "Unauthenticated"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        "403":
+          description: "Unauthorised"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
         "404":
           description: "Church/group not found"
           schema:
@@ -716,6 +876,14 @@ paths:
             $ref: "#/definitions/MessageIn"
         "400":
           description: "Invalid input"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        "401":
+          description: "Unauthenticated"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        "403":
+          description: "Unauthorised"
           schema:
             $ref: "#/definitions/ErrorResponse"
         "404":

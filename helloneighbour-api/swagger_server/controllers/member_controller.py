@@ -11,6 +11,7 @@ from swagger_server.models.message_in import MessageIn  # noqa: E501
 from swagger_server.models.user import User  # noqa: E501
 from swagger_server.models.user_in import UserIn  # noqa: E501
 from swagger_server import util
+from swagger_server.controllers.common import IDENTITY_HEADER
 
 
 def add_contact_method(userUuid, body):  # noqa: E501
