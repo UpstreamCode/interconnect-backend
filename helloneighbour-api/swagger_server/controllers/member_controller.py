@@ -12,6 +12,9 @@ from swagger_server.models.user import User  # noqa: E501
 from swagger_server.models.user_in import UserIn  # noqa: E501
 from swagger_server import util
 from swagger_server.controllers.common import IDENTITY_HEADER
+from swagger_server.bootstrap import db
+from swagger_server.storage.user import User as StorageUser
+from swagger_server.storage.church import Church as StorageChurch
 
 
 def add_contact_method(userUuid, body):  # noqa: E501
@@ -43,7 +46,15 @@ def create_user(body):  # noqa: E501
     """
     if connexion.request.is_json:
         body = UserIn.from_dict(connexion.request.get_json())  # noqa: E501
-    return 'do some magic!'
+    
+    if not (body.first_name and body.email):
+        return ErrorResponse(code=400, message="missing name or email from user")
+
+    user = StorageUser(first_name=body.first_name,last_name=body.last_name,email=body.email,church_id=1,role="member")
+    db.session.add(user)
+    db.session.commit()
+        
+    return User(email=user.email,first_name=user.first_name,last_name=user.last_name,church=user.church_id.pub_id)
 
 
 def delete_contact_method(userUuid, methodUuid):  # noqa: E501
