@@ -30,6 +30,7 @@ setup(
         'console_scripts': ['swagger_server=swagger_server.__main__:main']},
     long_description="""\
     This is the API for COVID-19 Global Church Hack &#39;Hello Neighbour&#39; project
-    """
+    """,
+    zip_safe=False
 )
 
