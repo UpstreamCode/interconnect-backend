@@ -210,3 +210,4 @@ fabric.properties
 !.vscode/extensions.json
 *.code-workspace
 
+.DS_Store
