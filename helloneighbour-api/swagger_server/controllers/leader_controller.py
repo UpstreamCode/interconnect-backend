@@ -9,6 +9,7 @@ from swagger_server.models.question import Question  # noqa: E501
 from swagger_server.models.question_in import QuestionIn  # noqa: E501
 from swagger_server.models.user import User  # noqa: E501
 from swagger_server import util
+from swagger_server.controllers.common import IDENTITY_HEADER
 
 
 def add_church(body):  # noqa: E501

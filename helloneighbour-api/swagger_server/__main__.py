@@ -1,14 +1,11 @@
 #!/usr/bin/env python3
 
-import connexion
-
-from swagger_server import encoder
+from swagger_server.bootstrap import app, db
+from swagger_server.storage import *
 
 
 def main():
-    app = connexion.App(__name__, specification_dir='./swagger/')
-    app.app.json_encoder = encoder.JSONEncoder
-    app.add_api('swagger.yaml', arguments={'title': 'COVID-19 Global Church Hack &#39;Hello Neighbour&#39;'})
+    db.create_all()
     app.run(port=8080)
 
 

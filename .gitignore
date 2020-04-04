@@ -210,4 +210,11 @@ fabric.properties
 !.vscode/extensions.json
 *.code-workspace
 
+# Mac
 .DS_Store
+
+# SQLite
+*.db
+
+# config file
+helloneighbour-api/swagger_server/config.py
