@@ -2,7 +2,7 @@ import enum
 from uuid import uuid4
 
 from ..bootstrap import db
-from .matchgroup_user import MatchgroupUser
+from .matchgroup_user import matchgroup_user
 
 
 class Gender(enum.Enum):
@@ -26,14 +26,9 @@ class User(db.Model):
     date_of_birth = db.Column(db.DateTime)
     email = db.Column(db.Text, unique=True, nullable=False)
     description = db.Column(db.Text)
-    church_id = db.Column(
+    church = db.Column(
         db.Integer,
         db.ForeignKey('church.id'),
         nullable=False
     )
     role = db.Column(db.Enum(Role), nullable=False)
-
-    matches = db.relationship(
-        "MatchGroup",
-        secondary=MatchgroupUser,
-        back_populates="users")

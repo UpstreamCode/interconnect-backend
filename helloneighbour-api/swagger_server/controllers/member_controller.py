@@ -48,13 +48,27 @@ def create_user(body):  # noqa: E501
         body = UserIn.from_dict(connexion.request.get_json())  # noqa: E501
     
     if not (body.first_name and body.email):
-        return ErrorResponse(code=400, message="missing name or email from user")
+        return ErrorResponse(
+            code=400,
+            message="Missing first name or email from user"
+        )
 
-    user = StorageUser(first_name=body.first_name,last_name=body.last_name,email=body.email,church_id=1,role="member")
+    user = StorageUser(
+        first_name=body.first_name,
+        last_name=body.last_name,
+        email=body.email,
+        church=1,
+        role="member",
+    )
     db.session.add(user)
     db.session.commit()
         
-    return User(email=user.email,first_name=user.first_name,last_name=user.last_name,church=user.church_id.pub_id)
+    return User(
+        email=user.email,
+        first_name=user.first_name,
+        last_name=user.last_name,
+        church=user.church.pub_id,
+    )
 
 
 def delete_contact_method(userUuid, methodUuid):  # noqa: E501
