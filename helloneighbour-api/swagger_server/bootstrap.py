@@ -18,4 +18,5 @@ try:
     db.session.commit()
 except:
     pass
+
 app.add_api('swagger.yaml', arguments={'title': 'COVID-19 Global Church Hack &#39;Hello Neighbour&#39;'})
