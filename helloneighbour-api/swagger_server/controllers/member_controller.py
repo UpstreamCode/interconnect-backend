@@ -1,6 +1,8 @@
 import connexion
 import six
 
+from sqlalchemy import func, desc
+
 from swagger_server.models.church_public import ChurchPublic  # noqa: E501
 from swagger_server.models.contact_method import ContactMethod  # noqa: E501
 from swagger_server.models.contact_method_in import ContactMethodIn  # noqa: E501
@@ -12,6 +14,10 @@ from swagger_server.models.user import User  # noqa: E501
 from swagger_server.models.user_in import UserIn  # noqa: E501
 from swagger_server import util
 from swagger_server.controllers.common import IDENTITY_HEADER
+from swagger_server.bootstrap import db
+from swagger_server.storage.user import User as StorageUser
+from swagger_server.storage.church import Church as StorageChurch
+from swagger_server.storage.church import Church as StorageChurch
 
 
 def add_contact_method(userUuid, body):  # noqa: E501
@@ -43,7 +49,48 @@ def create_user(body):  # noqa: E501
     """
     if connexion.request.is_json:
         body = UserIn.from_dict(connexion.request.get_json())  # noqa: E501
-    return 'do some magic!'
+    
+    firebase_id = connexion.request.headers.get(IDENTITY_HEADER)
+    if not firebase_id:
+        return ErrorResponse(code=401, message="Unauthenticated"), 401
+
+    if not (body.first_name and body.email):
+        return ErrorResponse(
+            code=400,
+            message="Missing first name or email from user"
+        )
+
+    newUserGroup = None
+    last_group = db.session.query(StorageUser.group_num, func.count(StorageUser.group_num)).group_by(StorageUser.group_num).order_by(desc(StorageUser.group_num)).first()
+    if last_group:
+        if last_group[1] < 4:
+            newUserGroup = last_group[0]
+        else:
+            newUserGroup = last_group[0] + 1
+    else:
+        newUserGroup = 1   
+
+    user = StorageUser(
+        first_name=body.first_name,
+        last_name=body.last_name,
+        email=body.email,
+        description = body.description,
+        church=1,
+        role="member",
+        group_num=newUserGroup,
+        firebase_id=firebase_id
+    )
+    db.session.add(user)
+    db.session.commit()
+    
+    ogChurch = db.session.query(StorageChurch).first()
+    return User(
+        email=user.email,
+        first_name=user.first_name,
+        last_name=user.last_name,
+        description=user.description,
+        church=ogChurch.pub_id
+    )
 
 
 def delete_contact_method(userUuid, methodUuid):  # noqa: E501
@@ -118,7 +165,22 @@ def get_match_group(churchUuid, userUuid):  # noqa: E501
 
     :rtype: Group
     """
-    return 'do some magic!'
+    firebase_id = connexion.request.headers.get(IDENTITY_HEADER)
+    if not firebase_id:
+        return ErrorResponse(code=401, message="Unauthenticated"), 401
+    me = db.session.query(StorageUser).filter_by(firebase_id=firebase_id).first()
+    if not me:
+        return ErrorResponse(code=401, message="Unauthenticated"), 401
+    group = []
+    for u in db.session.query(StorageUser).filter_by(group_num=me.group_num).all():
+         group.append(User(
+             uuid=u.pub_id,
+             first_name=u.first_name,
+             last_name=u.last_name,
+             email=u.email,
+             description=u.description
+         ))
+    return group
 
 
 def get_messages(userUuid, churchUuid, matchGroupUuid):  # noqa: E501

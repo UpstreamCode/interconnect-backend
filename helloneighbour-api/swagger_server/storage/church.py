@@ -1,4 +1,4 @@
-from uuid import uuid4
+from .uuid_generator import uuid_str
 
 from ..bootstrap import db
 
@@ -6,7 +6,7 @@ from ..bootstrap import db
 class Church(db.Model):
     """ A church """
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    pub_id = db.Column(db.Text, default=uuid4, unique=True)
+    pub_id = db.Column(db.Text, default=uuid_str, unique=True)
     name = db.Column(db.Text, nullable=False)
     description = db.Column(db.Text)
     address = db.Column(db.Text)
