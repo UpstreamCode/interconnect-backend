@@ -1,6 +1,8 @@
 import connexion
 import six
 
+from sqlalchemy import func, desc
+
 from swagger_server.models.church_public import ChurchPublic  # noqa: E501
 from swagger_server.models.contact_method import ContactMethod  # noqa: E501
 from swagger_server.models.contact_method_in import ContactMethodIn  # noqa: E501
@@ -53,21 +55,35 @@ def create_user(body):  # noqa: E501
             message="Missing first name or email from user"
         )
 
+    newUserGroup = None
+    last_group = db.session.query(StorageUser.group_num, func.count(StorageUser.group_num)).group_by(StorageUser.group_num).order_by(desc(StorageUser.group_num)).first()
+    if last_group:
+        if last_group[1] < 4:
+            newUserGroup = last_group[0]
+        else:
+            newUserGroup = last_group[0] + 1
+    else:
+        newUserGroup = 1   
+
     user = StorageUser(
         first_name=body.first_name,
         last_name=body.last_name,
         email=body.email,
+        description = body.description,
         church=1,
         role="member",
+        group_num = newUserGroup
     )
     db.session.add(user)
     db.session.commit()
-        
+    
+    ogChurch = db.session.query(StorageChurch).first()
     return User(
         email=user.email,
         first_name=user.first_name,
         last_name=user.last_name,
-        church=user.church.pub_id,
+        description=user.description,
+        church=ogChurch.pub_id
     )
 
 

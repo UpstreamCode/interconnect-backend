@@ -32,3 +32,4 @@ class User(db.Model):
         nullable=False
     )
     role = db.Column(db.Enum(Role), nullable=False)
+    group_num = db.Column(db.Integer, nullable=False)
