@@ -19,7 +19,7 @@ class User(db.Model):
     """ A user """
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     pub_id = db.Column(db.Text, default=uuid_str, unique=True)
-    fire_base_id = db.Column(db.Text)
+    firebase_id = db.Column(db.Text)
     first_name = db.Column(db.Text, nullable=False)
     last_name = db.Column(db.Text, nullable=True)
     gender = db.Column(db.Enum(Gender))

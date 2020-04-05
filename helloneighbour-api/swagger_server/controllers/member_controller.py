@@ -15,6 +15,7 @@ from swagger_server.controllers.common import IDENTITY_HEADER
 from swagger_server.bootstrap import db
 from swagger_server.storage.user import User as StorageUser
 from swagger_server.storage.church import Church as StorageChurch
+from swagger_server.storage.church import Church as StorageChurch
 
 
 def add_contact_method(userUuid, body):  # noqa: E501
@@ -47,6 +48,10 @@ def create_user(body):  # noqa: E501
     if connexion.request.is_json:
         body = UserIn.from_dict(connexion.request.get_json())  # noqa: E501
     
+    firebase_id = connexion.request.headers.get(IDENTITY_HEADER)
+    if not firebase_id:
+        return ErrorResponse(code=401, message="Unauthenticated"), 401
+
     if not (body.first_name and body.email):
         return ErrorResponse(
             code=400,
@@ -59,15 +64,17 @@ def create_user(body):  # noqa: E501
         email=body.email,
         church=1,
         role="member",
+        firebase_id=firebase_id
     )
     db.session.add(user)
     db.session.commit()
+    church = db.session.query(StorageChurch).filter_by(id=1).first()
         
     return User(
         email=user.email,
         first_name=user.first_name,
         last_name=user.last_name,
-        church=user.church.pub_id,
+        church=church.pub_id,
     )
 
 
@@ -143,7 +150,14 @@ def get_match_group(churchUuid, userUuid):  # noqa: E501
 
     :rtype: Group
     """
-    return 'do some magic!'
+    firebase_id = connexion.request.headers.get(IDENTITY_HEADER)
+    if not firebase_id:
+        return ErrorResponse(code=401, message="Unauthenticated"), 401
+    me = db.session.query(StorageUser).filter_by(firebase_id=firebase_id).first()
+    if not me:
+        return ErrorResponse(code=401, message="Unauthenticated"), 401
+    group = db.session.query(StorageUser).filter_by(group_number=me.group_number).all()
+    return group
 
 
 def get_messages(userUuid, churchUuid, matchGroupUuid):  # noqa: E501
