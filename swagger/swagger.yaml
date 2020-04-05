@@ -123,7 +123,7 @@ paths:
           schema:
             $ref: "#/definitions/ErrorResponse"
   
-  /church/{churchUuid}/invite:
+  /church/invite: # church is determined by requesting user's affiliation
     post:
       tags:
       - "leader"
@@ -156,32 +156,7 @@ paths:
           schema:
             $ref: "#/definitions/ErrorResponse"
   
-  /church/{churchUuid}/users:
-    get:
-      tags:
-      - "leader"
-      summary: "Retrieve list of all your church members"
-      description: "Retrieve user details of all users of a specific church."
-      operationId: "getUsers"
-      parameters:
-      - in: "path"
-        name: "churchUuid"
-        type: "string"
-        format: "uuid"
-        required: true
-      responses:
-        200:
-          description: "User list"
-          schema:
-            type: "array"
-            items:
-              $ref: "#/definitions/User"
-        404:
-          description: "Church not found"
-          schema:
-            $ref:  "#/definitions/ErrorResponse"
-
-  /church/{churchUuid}/question:
+  /church/question: # church is determined by requesting user's affiliation
     post:
       tags:
       - "leader"
@@ -217,12 +192,10 @@ paths:
           description: "Invalid input"
           schema:
             $ref: "#/definitions/ErrorResponse"
-            
-  /church/{churchUuid}/questions:
     get:
       tags:
       - "leader"
-      summary: "Retrieve list of all your church questions"
+      summary: "Retrieve list of all your church's questions"
       description: "Retrieve questions of a specific church."
       operationId: "getQuestions"
       parameters:
@@ -243,7 +216,7 @@ paths:
           schema:
             $ref:  "#/definitions/ErrorResponse"
 
-  /church/{churchUuid}/question/{questionUuid}:
+  /church/question/{questionUuid}: # church is determined by requesting user's affiliation
     get:
       tags:
       - "leader"
@@ -337,7 +310,7 @@ paths:
           schema:
             $ref: "#/definitions/ErrorResponse"
 
-  /church/{churchUuid}/matchgroups:
+  /church/matchgroups: # church and user are determined based on user session
     get:
       tags:
       - "leader"
@@ -469,7 +442,7 @@ paths:
           schema:
             $ref: "#/definitions/ErrorResponse"
 
-  /user/{userUuid}/contactmethod:
+  /user/contactmethod:
     post:
       tags:
       - "member"
@@ -501,7 +474,7 @@ paths:
           schema:
             $ref: "#/definitions/ErrorResponse"
 
-  /user/{userUuid}/contactmethod/{methodUuid}:
+  /user/contactmethod/{methodUuid}:
     put:
       tags:
       - "member"
@@ -576,7 +549,7 @@ paths:
           schema:
             $ref: "#/definitions/ErrorResponse"
 
-  /user/{userUuid}/church/{churchUuid}:
+  /user/church/{churchUuid}:
    get:
       tags:
       - "member"
@@ -604,7 +577,7 @@ paths:
           schema:
             $ref:  "#/definitions/ErrorResponse"
             
-  /user/{userUuid}/church/{churchUuid}/matchgroup:
+  /user/matchgroup:  # refers to requesting user's current match group
     get:
       tags:
       - "member"
@@ -632,7 +605,7 @@ paths:
           schema:
             $ref:  "#/definitions/ErrorResponse"
             
-  /user/{userUuid}/church/{churchUuid}/matchgroup/{matchGroupUuid}/bulletin:
+  /user/bulletin: # refers to requesting user's current match group's bulletin
     post:
       tags:
       - "member"
