@@ -12,11 +12,11 @@ from swagger_server.models.message import Message  # noqa: E501
 from swagger_server.models.message_in import MessageIn  # noqa: E501
 from swagger_server.models.user import User  # noqa: E501
 from swagger_server.models.user_in import UserIn  # noqa: E501
+from swagger_server.models.user_public import UserPublic  # noqa: E501
 from swagger_server import util
 from swagger_server.controllers.common import IDENTITY_HEADER
 from swagger_server.bootstrap import db
 from swagger_server.storage.user import User as StorageUser
-from swagger_server.storage.church import Church as StorageChurch
 from swagger_server.storage.church import Church as StorageChurch
 
 
@@ -171,16 +171,16 @@ def get_match_group(churchUuid, userUuid):  # noqa: E501
     me = db.session.query(StorageUser).filter_by(firebase_id=firebase_id).first()
     if not me:
         return ErrorResponse(code=401, message="Unauthenticated"), 401
-    group = []
+    users = []
     for u in db.session.query(StorageUser).filter_by(group_num=me.group_num).all():
-         group.append(User(
+         users.append(UserPublic(
              uuid=u.pub_id,
              first_name=u.first_name,
              last_name=u.last_name,
              email=u.email,
              description=u.description
          ))
-    return group
+    return Group(users=users)
 
 
 def get_messages(userUuid, churchUuid, matchGroupUuid):  # noqa: E501
