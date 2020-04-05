@@ -173,7 +173,13 @@ def get_match_group(churchUuid, userUuid):  # noqa: E501
         return ErrorResponse(code=401, message="Unauthenticated"), 401
     group = []
     for u in db.session.query(StorageUser).filter_by(group_num=me.group_num).all():
-         group.append(User(first_name=u.first_name, last_name=u.last_name))
+         group.append(User(
+             uuid=u.pub_id,
+             first_name=u.first_name,
+             last_name=u.last_name,
+             email=u.email,
+             description=u.description
+         ))
     return group
 
 
