@@ -77,7 +77,8 @@ def create_user(body):  # noqa: E501
         description = body.description,
         church=1,
         role="member",
-        group_num = newUserGroup
+        group_num=newUserGroup,
+        firebase_id=firebase_id
     )
     db.session.add(user)
     db.session.commit()
@@ -170,7 +171,9 @@ def get_match_group(churchUuid, userUuid):  # noqa: E501
     me = db.session.query(StorageUser).filter_by(firebase_id=firebase_id).first()
     if not me:
         return ErrorResponse(code=401, message="Unauthenticated"), 401
-    group = db.session.query(StorageUser).filter_by(group_number=me.group_number).all()
+    group = []
+    for u in db.session.query(StorageUser).filter_by(group_num=me.group_num).all():
+         group.append(User(first_name=u.first_name, last_name=u.last_name))
     return group
 
 
